@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+data/*.db
+data/*.db-*
+data/*.log
+data/no_trailing_reports/
+data/mt5_tick_cache/
+logs/
+config/*.bak

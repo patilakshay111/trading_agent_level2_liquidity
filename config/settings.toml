@@ -1,0 +1,418 @@
+[server]
+host = "127.0.0.1"
+port = 8767
+open_browser_on_start = true
+
+[engine]
+poll_interval_seconds = 2.0
+max_trade_age_seconds = 900
+paper_initial_equity = 10000.0
+auto_start = true
+keep_awake = true
+
+[telegram]
+enabled = false
+bot_token = ""
+chat_id = ""
+allowed_chat_ids = []
+send_trade_alerts = true
+chat_enabled = true
+poll_interval_seconds = 5.0
+long_poll_timeout_seconds = 10
+
+[market_data]
+# websocket is the production path. rest is only for diagnostics.
+mode = "websocket"
+market = "um_futures"
+rest_base_url = "https://fapi.binance.com"
+ws_host = "fstream.binance.com"
+ws_port = 443
+real_data_only = true
+stale_after_seconds = 5.0
+snapshot_limit = 1000
+trade_buffer_size = 300
+book_levels_for_heatmap = 100
+price_bucket_size.BTCUSDT = 100.0
+price_bucket_size.ETHUSDT = 10.0
+price_bucket_size.XAUUSDT = 5.0
+
+[open_interest]
+enabled = true
+poll_interval_seconds = 15
+history_size = 20
+min_change_pct = 0.03
+
+[liquidity_memory]
+enabled = true
+sample_interval_seconds = 2
+retention_minutes = 180
+ema_alpha = 0.18
+min_bucket_notional.BTCUSDT = 250000.0
+min_bucket_notional.ETHUSDT = 100000.0
+min_bucket_notional.XAUUSDT = 50000.0
+target_memory_weight = 0.35
+pull_warning_decay_seconds = 120
+
+[historical_liquidity]
+enabled = true
+years = 2
+interval = "1m"
+decay_half_life_days = 30
+weight = 0.30
+max_levels_each_side = 12
+derived_intervals = ["1m", "5m", "15m", "30m", "1h"]
+update_on_startup = true
+update_while_running = true
+live_rebuild_levels = false
+startup_recent_limit = 1500
+level_rebuild_interval_minutes = 60
+raw_m1_retention_days = 60
+prune_interval_days = 30
+prune_raw_m1_while_running = true
+incremental_level_window_days = 7
+request_sleep_seconds = 0.05
+binance_symbols = ["BTCUSDT", "ETHUSDT"]
+mt5_fallback_symbols = ["XAUUSDT"]
+
+[major_liquidity]
+enabled = true
+min_zone_score = 65.0
+max_zones_each_side = 8
+merge_distance_bps.BTCUSDT = 10.0
+merge_distance_bps.ETHUSDT = 10.0
+merge_distance_bps.XAUUSDT = 6.0
+min_book_notional.BTCUSDT = 250000.0
+min_book_notional.ETHUSDT = 100000.0
+min_book_notional.XAUUSDT = 50000.0
+profile_strength_min = 75.0
+vwap_zone_score = 62.0
+swing_zone_score = 68.0
+
+[vwap]
+source = "binance_klines_plus_live"
+anchor = "utc_day"
+interval = "1m"
+reconcile_seconds = 60
+backfill_limit = 1500
+
+[execution]
+# mt5_demo or mt5_live. paper is intentionally not used by default. paper/hybrid/mt5_live
+mode = "paper"
+allow_live_orders = true
+magic_number = 260618
+deviation_points = 30
+comment = "TradingAgent"
+
+[watchdog]
+enabled = false
+market_stale_seconds = 30.0
+market_restart_cooldown_seconds = 30.0
+mt5_check_interval_seconds = 30.0
+mt5_failure_threshold = 3
+block_live_entries_on_mt5_failure = true
+mt5_restart_enabled = true
+mt5_restart_interval_seconds = 120.0
+mt5_restart_backoff_multiplier = 2.0
+mt5_restart_max_interval_seconds = 90000.0
+mt5_failure_notify_interval_seconds = 120.0
+# Set this to your MT5 terminal64.exe path to let watchdog relaunch MT5.
+mt5_terminal_path = 'C:\Users\akpatil\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075'
+telegram_alerts = true
+alert_cooldown_seconds = 300.0
+
+[risk]
+risk_per_trade_pct = 0.5
+sizing_account_balance = 10000.0
+max_daily_loss_pct = 100
+max_total_open_risk_pct = 10.0
+max_open_positions = 6
+max_open_positions_per_symbol = 1
+max_consecutive_losses = 30
+min_rr = 2.0
+preferred_rr = 2.5
+same_symbol_side_stop_cooldown_seconds = 1800
+
+[execution_guards]
+enabled = true
+min_stop_distance.BTCUSDT = 150.0
+min_stop_distance.ETHUSDT = 4.0
+min_stop_distance.XAUUSDT = 3.0
+min_stop_bps.BTCUSDT = 18.0
+min_stop_bps.ETHUSDT = 18.0
+min_stop_bps.XAUUSDT = 7.0
+max_lots.BTCUSDT = 2.05
+max_lots.ETHUSDT = 10.0
+max_lots.XAUUSDT = 1.20
+cap_oversized_lots = true
+max_lot_cap_risk_pct = 0.5
+widen_tight_stops = true
+
+[session_sweep_guard]
+enabled = false
+window_minutes = 30
+block_sides = ["BUY", "SELL"]
+sessions = [
+  { name = "Asia", open_utc = "00:00" },
+  { name = "London", open_utc = "07:00" },
+  { name = "New York", open_utc = "13:30" },
+]
+
+[trade_management]
+enabled = true
+breakeven_trigger_r = 1.5
+breakeven_lock_r = 0.30
+trail_trigger_r = 2.5
+trail_distance_r = 1.0
+min_stop_update_bps = 1.0
+
+[active_exit]
+enabled = false
+min_trade_age_seconds = 60
+min_adverse_passes = 3
+min_wick_pct = 0.45
+min_close_reclaim_pct = 0.55
+min_delta_imbalance = 0.10
+min_session_delta_imbalance = 0.01
+min_recent_cvd.BTCUSDT = 0.25
+min_recent_cvd.ETHUSDT = 2.0
+min_recent_cvd.XAUUSDT = 8.0
+close_on_opposite_absorption = true
+close_on_regime_flip = true
+protect_on_first_absorption = true
+absorption_protection_min_profit_r = 0.10
+absorption_protection_lock_r = 0.30
+absorption_protection_price_buffer_r = 0.05
+min_profit_r_to_close = 0.10
+close_losing_trades = true
+hard_invalidation_min_age_seconds = 180
+hard_invalidation_min_adverse_passes = 5
+hard_invalidation_min_adverse_r = 0.50
+target_absorption_exit_enabled = true
+target_absorption_min_profit_r = 1.0
+target_absorption_proximity_bps.BTCUSDT = 12.0
+target_absorption_proximity_bps.ETHUSDT = 14.0
+target_absorption_proximity_bps.XAUUSDT = 8.0
+
+[entry_candle_confirmation]
+enabled = true
+use_closed_m1 = true
+lookback_candles = 2
+min_wick_pct = 0.40
+min_close_reclaim_pct = 0.60
+extreme_tolerance_bps.BTCUSDT = 8.0
+extreme_tolerance_bps.ETHUSDT = 10.0
+extreme_tolerance_bps.XAUUSDT = 6.0
+require_delta_alignment = true
+min_delta_imbalance.BTCUSDT = 0.0
+min_delta_imbalance.ETHUSDT = 0.0
+min_delta_imbalance.XAUUSDT = 0.0
+
+[a_plus_filter]
+enabled = true
+allowed_strategies = ["major_liquidity_sweep_retest_thesis", "locked_liquidity_thesis_entry", "repeated_liquidity_zone_thesis", "drift_sweep_retrace_thesis"]
+min_score = 85.0
+min_rr = 2.5
+min_liquidity_score = 60.0
+min_target_memory_score = 15.0
+require_trend_alignment = true
+allow_range_regime = false
+require_entry_liquidity_zone = true
+min_entry_liquidity_score = 55.0
+min_entry_liquidity_notional.BTCUSDT = 250000.0
+min_entry_liquidity_notional.ETHUSDT = 100000.0
+min_entry_liquidity_notional.XAUUSDT = 50000.0
+min_target_distance_bps.BTCUSDT = 30.0
+min_target_distance_bps.ETHUSDT = 30.0
+min_target_distance_bps.XAUUSDT = 35.0
+min_target_distance_bps_by_strategy.drift_sweep_retrace_thesis.XAUUSDT = 35.0
+fallback_enabled = true
+fallback_min_score = 90.0
+fallback_min_rr = 2.5
+fallback_min_liquidity_score = 65.0
+fallback_min_entry_liquidity_score = 75.0
+fallback_min_target_memory_score = 15.0
+fallback_allow_range_regime = false
+fallback_min_target_distance_bps.BTCUSDT = 55.0
+fallback_min_target_distance_bps.ETHUSDT = 55.0
+fallback_min_target_distance_bps.XAUUSDT = 50.0
+
+[strategy]
+min_total_score = 75
+min_liquidity_score = 65
+max_spread_bps.BTCUSDT = 40.0
+max_spread_bps.ETHUSDT = 50.0
+max_spread_bps.XAUUSDT = 80.0
+book_levels = 1000
+heatmap_range.BTCUSDT = 1000.0
+heatmap_range.ETHUSDT = 1000.0
+heatmap_range.XAUUSDT = 100.0
+imbalance_threshold = 0.18
+flow_threshold = 0.12
+tp_rr = 2.5
+stop_bps.BTCUSDT = 10.0
+stop_bps.ETHUSDT = 12.0
+stop_bps.XAUUSDT = 15.0
+entry_tolerance_bps.BTCUSDT = 2.0
+entry_tolerance_bps.ETHUSDT = 2.5
+entry_tolerance_bps.XAUUSDT = 3.0
+sl_buffer_bps.BTCUSDT = 6.0
+sl_buffer_bps.ETHUSDT = 7.0
+sl_buffer_bps.XAUUSDT = 4.0
+min_structural_stop_bps.BTCUSDT = 12.0
+min_structural_stop_bps.ETHUSDT = 14.0
+min_structural_stop_bps.XAUUSDT = 6.0
+max_structural_stop_bps.BTCUSDT = 45.0
+max_structural_stop_bps.ETHUSDT = 55.0
+max_structural_stop_bps.XAUUSDT = 30.0
+volatility_window_trades = 80
+min_stop_volatility_mult = 1.5
+price_bucket_size.BTCUSDT = 100.0
+price_bucket_size.ETHUSDT = 10.0
+price_bucket_size.XAUUSDT = 5.0
+
+[setups]
+require_confirmation = true
+confirmation_cycles = 3
+max_setup_age_seconds = 60
+reject_if_price_outside_entry_zone = true
+minimum_reason_length = 40
+breakout_retest_enabled = true
+breakout_buffer_bps.BTCUSDT = 3.0
+breakout_buffer_bps.ETHUSDT = 3.0
+breakout_buffer_bps.XAUUSDT = 2.0
+retest_fail_bps.BTCUSDT = 6.0
+retest_fail_bps.ETHUSDT = 6.0
+retest_fail_bps.XAUUSDT = 4.0
+
+[thesis]
+enabled = true
+min_score = 72
+entry_trigger_score = 75
+max_age_seconds = 900
+major_liquidity_thesis_enabled = true
+major_liquidity_min_score = 82.0
+major_liquidity_min_zone_score = 70.0
+major_liquidity_max_age_seconds = 0.0
+major_liquidity_sweep_buffer_bps.BTCUSDT = 4.0
+major_liquidity_sweep_buffer_bps.ETHUSDT = 5.0
+major_liquidity_sweep_buffer_bps.XAUUSDT = 4.0
+major_liquidity_displacement_bps.BTCUSDT = 14.0
+major_liquidity_displacement_bps.ETHUSDT = 16.0
+major_liquidity_displacement_bps.XAUUSDT = 8.0
+major_liquidity_retest_tolerance_bps.BTCUSDT = 8.0
+major_liquidity_retest_tolerance_bps.ETHUSDT = 10.0
+major_liquidity_retest_tolerance_bps.XAUUSDT = 6.0
+major_liquidity_min_target_distance_bps.BTCUSDT = 70.0
+major_liquidity_min_target_distance_bps.ETHUSDT = 75.0
+major_liquidity_min_target_distance_bps.XAUUSDT = 30.0
+opposite_wick_rejection_enabled = true
+opposite_wick_rejection_lookback_candles = 3
+opposite_wick_rejection_min_wick_pct = 0.40
+opposite_wick_rejection_min_close_reclaim_pct = 0.60
+opposite_wick_rejection_tolerance_bps.BTCUSDT = 8.0
+opposite_wick_rejection_tolerance_bps.ETHUSDT = 10.0
+opposite_wick_rejection_tolerance_bps.XAUUSDT = 6.0
+double_wick_rejection_enabled = true
+double_wick_rejection_min_wick_pct = 0.30
+double_wick_rejection_tolerance_bps.BTCUSDT = 8.0
+double_wick_rejection_tolerance_bps.ETHUSDT = 10.0
+double_wick_rejection_tolerance_bps.XAUUSDT = 6.0
+zone_thesis_enabled = true
+zone_required_touches = 3
+zone_max_age_seconds = 1200
+zone_min_score = 70
+zone_absorption_wick_enabled = true
+zone_absorption_lookback_candles = 3
+zone_absorption_min_wick_pct = 0.30
+zone_absorption_min_close_reclaim_pct = 0.55
+zone_absorption_extreme_tolerance_bps.BTCUSDT = 6.0
+zone_absorption_extreme_tolerance_bps.ETHUSDT = 8.0
+zone_absorption_extreme_tolerance_bps.XAUUSDT = 5.0
+drift_thesis_enabled = true
+drift_required_pushes = 3
+drift_max_age_seconds = 900
+drift_min_score = 72
+drift_absorption_wick_enabled = true
+drift_absorption_lookback_candles = 3
+drift_absorption_min_wick_pct = 0.35
+drift_absorption_min_close_reclaim_pct = 0.55
+drift_absorption_extreme_tolerance_bps.BTCUSDT = 8.0
+drift_absorption_extreme_tolerance_bps.ETHUSDT = 10.0
+drift_absorption_extreme_tolerance_bps.XAUUSDT = 6.0
+flow_confirmation_enabled = true
+flow_confirmation_min_passes = 3
+flow_confirmation_min_delta_imbalance.BTCUSDT = 0.06
+flow_confirmation_min_delta_imbalance.ETHUSDT = 0.06
+flow_confirmation_min_delta_imbalance.XAUUSDT = 0.05
+flow_confirmation_min_recent_cvd.BTCUSDT = 0.25
+flow_confirmation_min_recent_cvd.ETHUSDT = 2.0
+flow_confirmation_min_recent_cvd.XAUUSDT = 8.0
+flow_confirmation_min_absorption_score = 20.0
+flow_confirmation_allow_neutral_oi = true
+flow_confirmation_require_core_flow = true
+flow_confirmation_require_session_not_opposed = true
+flow_confirmation_block_oi_divergence = true
+sharp_flow_enabled = true
+sharp_flow_min_score = 74
+sharp_flow_min_delta.BTCUSDT = 0.28
+sharp_flow_min_delta.ETHUSDT = 0.28
+sharp_flow_min_delta.XAUUSDT = 0.25
+sharp_flow_min_drift_bps.BTCUSDT = 6.0
+sharp_flow_min_drift_bps.ETHUSDT = 8.0
+sharp_flow_min_drift_bps.XAUUSDT = 4.0
+sweep_buffer_bps.BTCUSDT = 4.0
+sweep_buffer_bps.ETHUSDT = 5.0
+sweep_buffer_bps.XAUUSDT = 4.0
+entry_reclaim_buffer_bps.BTCUSDT = 2.0
+entry_reclaim_buffer_bps.ETHUSDT = 2.5
+entry_reclaim_buffer_bps.XAUUSDT = 2.0
+min_target_distance_bps.BTCUSDT = 35.0
+min_target_distance_bps.ETHUSDT = 40.0
+min_target_distance_bps.XAUUSDT = 35.0
+
+[regime_filter]
+enabled = true
+block_against_regime = true
+allow_countertrend = false
+min_direction_score = 2
+vwap_distance_bps = 3.0
+recent_vwap_distance_bps = 1.0
+trade_drift_bps = 2.0
+delta_imbalance = 0.12
+session_delta_imbalance = 0.015
+magnet_min_confidence = 20.0
+countertrend_min_score = 94.0
+
+[structure_bias]
+enabled = true
+ttl_seconds = 1800
+break_buffer_bps.BTCUSDT = 4.0
+break_buffer_bps.ETHUSDT = 5.0
+break_buffer_bps.XAUUSDT = 4.0
+
+[[symbols]]
+name = "BTCUSDT"
+data_source = "binance_um_futures"
+data_symbol = "BTCUSDT"
+mt5_symbol = "BTCUSD"
+enabled = true
+trade_enabled = true
+notes = "Verify broker contract size before MT5 execution."
+
+[[symbols]]
+name = "ETHUSDT"
+data_source = "binance_um_futures"
+data_symbol = "ETHUSDT"
+mt5_symbol = "ETHUSD"
+enabled = true
+trade_enabled = true
+notes = "Verify broker contract size before MT5 execution."
+
+[[symbols]]
+name = "XAUUSDT"
+data_source = "binance_um_futures"
+data_symbol = "XAUUSDT"
+mt5_symbol = "XAUUSD"
+enabled = true
+trade_enabled = true
+notes = "Disabled: verify an actual Binance USD-M perpetual gold feed before enabling. MT5 broker symbol may still be XAUUSD."

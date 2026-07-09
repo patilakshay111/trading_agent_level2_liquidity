@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trading Agent</title>
+  <script>
+    (function () {
+      var theme = localStorage.getItem("theme");
+      if (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches) theme = "dark";
+      if (theme === "dark") document.documentElement.dataset.theme = "dark";
+    }());
+  </script>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">TA</div>
+      <div>
+        <strong>Trading Agent</strong>
+        <span>Binance liquidity / MT5 execution</span>
+      </div>
+    </div>
+    <nav>
+      <button class="nav active" data-view="dashboard">Dashboard</button>
+      <button class="nav" data-view="liquidity">Liquidity Map</button>
+      <button class="nav" data-view="important-levels">Important Levels</button>
+      <button class="nav" data-view="active-thesis">Active Thesis</button>
+      <button class="nav" data-view="backtest">Backtest</button>
+      <button class="nav" data-view="symbols">Symbols</button>
+      <button class="nav" data-view="trades">Trades</button>
+      <button class="nav" data-view="positions">MT5 Positions</button>
+      <button class="nav" data-view="candidates">Candidates</button>
+      <button class="nav" data-view="contracts">Contracts</button>
+      <button class="nav" data-view="events">Events</button>
+      <button class="nav" data-view="settings">Settings</button>
+    </nav>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div>
+        <h1 id="page-title">Dashboard</h1>
+        <p id="status-line">Loading system state...</p>
+      </div>
+      <div class="actions">
+        <button id="theme-toggle" class="ghost" type="button" aria-pressed="false">Dark Mode</button>
+        <button id="reload-btn" class="ghost">Reload Config</button>
+        <button id="scan-btn" class="ghost">Scan Contracts</button>
+        <button id="stop-btn" class="danger">Stop</button>
+        <button id="start-btn" class="primary">Start System</button>
+      </div>
+    </header>
+
+    <section id="dashboard" class="view active">
+      <div class="metric-grid">
+        <article class="metric"><span>Running</span><strong id="m-running">-</strong></article>
+        <article class="metric"><span>Net PnL</span><strong id="m-pnl">-</strong></article>
+        <article class="metric"><span>Profit Factor</span><strong id="m-pf">-</strong></article>
+        <article class="metric"><span>Win Rate</span><strong id="m-win-rate">-</strong></article>
+        <article class="metric"><span>Max Drawdown</span><strong id="m-dd">-</strong></article>
+        <article class="metric"><span>Best Trade</span><strong id="m-best-trade">-</strong></article>
+        <article class="metric"><span>Worst Trade</span><strong id="m-worst-trade">-</strong></article>
+        <article class="metric"><span>Open Trades</span><strong id="m-open">-</strong></article>
+        <article class="metric"><span>Total Trades</span><strong id="m-total">-</strong></article>
+        <article class="metric"><span>Execution</span><strong id="m-mode">-</strong></article>
+        <article class="metric"><span>Watchdog</span><strong id="m-watchdog">-</strong></article>
+        <article class="metric"><span>Market Feed</span><strong id="m-feed">-</strong></article>
+        <article class="metric"><span>Keep Awake</span><strong id="m-awake">-</strong></article>
+      </div>
+      <div class="panel dashboard-panel">
+        <div class="panel-head">
+          <h2>Hybrid MT5 Live Copy</h2>
+        </div>
+        <div class="metric-grid">
+          <article class="metric"><span>MT5 Net PnL</span><strong id="h-pnl">-</strong></article>
+          <article class="metric"><span>MT5 Open PnL</span><strong id="h-open-pnl">-</strong></article>
+          <article class="metric"><span>Open MT5</span><strong id="h-open">-</strong></article>
+          <article class="metric"><span>Total MT5</span><strong id="h-total">-</strong></article>
+          <article class="metric"><span>MT5 Win Rate</span><strong id="h-win-rate">-</strong></article>
+          <article class="metric"><span>MT5 Profit Factor</span><strong id="h-pf">-</strong></article>
+          <article class="metric"><span>MT5 Max DD</span><strong id="h-dd">-</strong></article>
+          <article class="metric"><span>MT5 Best</span><strong id="h-best-trade">-</strong></article>
+          <article class="metric"><span>MT5 Worst</span><strong id="h-worst-trade">-</strong></article>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Live Features</h2>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th><th>Health</th><th>Mid</th><th>Spread bps</th><th>Book Imb.</th><th>Flow Imb.</th><th>OI Signal</th><th>Bid Depth</th><th>Ask Depth</th>
+            </tr>
+          </thead>
+          <tbody id="features-body"></tbody>
+        </table>
+      </div>
+      <div class="panel dashboard-panel">
+        <div class="panel-head">
+          <h2>PnL By Symbol</h2>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th><th>Total PnL</th><th>Closed PnL</th><th>Open PnL</th><th>Closed</th><th>Open</th><th>Win Rate</th><th>Max DD</th><th>Best</th><th>Worst</th>
+            </tr>
+          </thead>
+          <tbody id="symbol-pnl-body"></tbody>
+        </table>
+      </div>
+      <div class="panel dashboard-panel">
+        <div class="panel-head">
+          <h2>PnL By Thesis</h2>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Thesis</th><th>Total PnL</th><th>Closed PnL</th><th>Open PnL</th><th>Closed</th><th>Open</th><th>Win Rate</th><th>Max DD</th><th>Best</th><th>Worst</th>
+            </tr>
+          </thead>
+          <tbody id="thesis-pnl-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="liquidity" class="view">
+      <div class="liquidity-toolbar">
+        <label for="liquidity-symbol">Symbol</label>
+        <select id="liquidity-symbol"></select>
+      </div>
+      <div class="liquidity-grid">
+        <div class="panel">
+          <div class="panel-head"><h2>Price Bucket Liquidity Heatmap</h2></div>
+          <div id="heatmap-panel" class="heatmap-panel"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>Liquidity Magnet</h2></div>
+          <div id="magnet-panel" class="detail-panel"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>Delta / VWAP / OI</h2></div>
+          <div id="delta-panel" class="detail-panel"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>Book Liquidity Buckets</h2></div>
+          <div id="far-liquidity-panel" class="profile-panel"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>Liquidity Memory</h2></div>
+          <div id="memory-panel" class="profile-panel"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>Volume Profile</h2></div>
+          <div id="profile-panel" class="profile-panel"></div>
+        </div>
+        <div class="panel liquidity-wide">
+          <div class="panel-head"><h2>Locked Thesis / Active Setup</h2></div>
+          <div id="setup-panel" class="detail-panel"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="important-levels" class="view">
+      <div class="panel">
+        <div class="panel-head"><h2>Current Important Levels</h2></div>
+        <div id="important-levels-summary" class="levels-summary"></div>
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Mid</th>
+              <th>Side</th>
+              <th>Zone</th>
+              <th>Score</th>
+              <th>Distance</th>
+              <th>Memory</th>
+              <th>Sources</th>
+            </tr>
+          </thead>
+          <tbody id="important-levels-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="symbols" class="view">
+      <div class="panel">
+        <div class="panel-head"><h2>Configured Symbols</h2></div>
+        <table>
+          <thead><tr><th>Name</th><th>Data Symbol</th><th>MT5 Symbol</th><th>Enabled</th><th>Trading</th><th>Notes</th></tr></thead>
+          <tbody id="symbols-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="backtest" class="view">
+      <div class="backtest-grid">
+        <div class="panel">
+          <div class="panel-head"><h2>Price Action Backtest</h2></div>
+          <div class="backtest-form">
+            <label>Symbol<select id="backtest-symbol"></select></label>
+            <label>Side<select id="backtest-side">
+              <option value="BOTH">Both</option>
+              <option value="SELL">Sell only</option>
+              <option value="BUY">Buy only</option>
+            </select></label>
+            <label>Days<input id="backtest-days" type="number" min="1" max="365" value="5"></label>
+            <label>RR<input id="backtest-rr" type="number" min="0.5" step="0.1" value="2.0"></label>
+            <label>Zone lookback<input id="backtest-lookback" type="number" min="10" max="500" value="120"></label>
+            <label>Box bps<input id="backtest-equal-bps" type="number" min="0.1" step="0.1" value="6.0"></label>
+            <label>Touches<input id="backtest-zone-touches" type="number" min="2" max="10" value="2"></label>
+            <label>Pivot span<input id="backtest-pivot-span" type="number" min="1" max="10" value="2"></label>
+            <label>Min wick<input id="backtest-wick" type="number" min="0.05" max="0.95" step="0.05" value="0.45"></label>
+            <label>Close reclaim<input id="backtest-reclaim" type="number" min="0.5" max="0.95" step="0.05" value="0.60"></label>
+            <label>Stop bps<input id="backtest-stop-buffer" type="number" min="0" step="0.1" value="1.0"></label>
+            <label>Max hold<input id="backtest-max-hold" type="number" min="1" max="1440" value="120"></label>
+            <label>Trailing<input id="backtest-trailing" type="checkbox" checked></label>
+            <button id="backtest-run" class="primary">Run Backtest</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>Result</h2></div>
+          <div id="backtest-summary" class="detail-panel">
+            <div class="empty-state">Run a price-action backtest to see baseline performance.</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel dashboard-panel">
+        <div class="panel-head"><h2>Backtest Trades</h2></div>
+        <table>
+          <thead>
+            <tr><th>Entry Time</th><th>Exit Time</th><th>Side</th><th>Lot</th><th>Entry</th><th>Initial SL</th><th>Final SL</th><th>TP</th><th>Exit</th><th>Outcome</th><th>Exit Rule</th><th>R</th><th>PnL $</th><th>Hold</th><th>Reason</th></tr>
+          </thead>
+          <tbody id="backtest-trades-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="active-thesis" class="view">
+      <div class="panel">
+        <div class="panel-head"><h2>Active Thesis</h2></div>
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>State</th>
+              <th>Trade</th>
+              <th>Side</th>
+              <th>Strategy</th>
+              <th>Setup</th>
+              <th>Entry</th>
+              <th>SL</th>
+              <th>TP</th>
+              <th>RR</th>
+              <th>Score</th>
+              <th>Lots</th>
+              <th>PnL</th>
+              <th>Target</th>
+              <th>Entry Sweep</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody id="active-thesis-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="trades" class="view">
+      <div class="panel">
+        <div class="panel-head"><h2>Executed Trades</h2></div>
+        <table>
+          <thead><tr><th>ID</th><th>Opened</th><th>Symbol</th><th>Side</th><th>Strategy</th><th>Setup</th><th>Entry</th><th>Lots</th><th>Request</th><th>Fill</th><th>SL</th><th>TP</th><th>Status</th><th>Price</th><th>PnL</th><th>MT5 PnL</th><th>Score</th><th>Exit Reason</th></tr></thead>
+          <tbody id="trades-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="positions" class="view">
+      <div class="panel">
+        <div class="panel-head"><h2>Live MT5 Positions</h2></div>
+        <table>
+          <thead><tr><th>Ticket</th><th>Symbol</th><th>Type</th><th>Volume</th><th>Price Open</th><th>SL</th><th>TP</th><th>Profit</th></tr></thead>
+          <tbody id="positions-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="candidates" class="view">
+      <div class="panel">
+        <div class="panel-head"><h2>Trade Candidates</h2></div>
+        <table>
+          <thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th>Strategy</th><th>Entry</th><th>SL</th><th>TP</th><th>RR</th><th>Lots</th><th>Risk</th><th>Score</th><th>Decision</th><th>Reason</th></tr></thead>
+          <tbody id="candidates-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="contracts" class="view">
+      <div class="panel">
+        <div class="panel-head"><h2>MT5 Contract Specs</h2></div>
+        <table>
+          <thead><tr><th>Symbol</th><th>Scanned</th><th>Contract</th><th>Tick Size</th><th>Tick Value</th><th>Min</th><th>Step</th><th>Max</th></tr></thead>
+          <tbody id="contracts-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="events" class="view">
+      <div class="panel">
+        <div class="panel-head"><h2>System Events</h2></div>
+        <table>
+          <thead><tr><th>Time</th><th>Level</th><th>Source</th><th>Message</th></tr></thead>
+          <tbody id="events-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="settings" class="view">
+      <div class="panel">
+        <div class="panel-head"><h2>Active Config</h2></div>
+        <pre id="config-json"></pre>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
