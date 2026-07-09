@@ -21,11 +21,11 @@ update_on_startup = true
 update_while_running = true
 raw_m1_retention_days = 60
 prune_interval_days = 30
-binance_symbols = ["BTCUSDT", "ETHUSDT"]
-mt5_fallback_symbols = ["XAUUSDT"]
+binance_symbols = ["BTCUSDT", "ETHUSDT", "XAUUSDT"]
+mt5_fallback_symbols = []
 ```
 
-For XAU history, keep MT5 open and logged in before running the backfill. If the `MetaTrader5` Python package is missing, install it in the Python environment used by the app.
+XAU history is configured to use Binance `XAUUSDT`. MT5 is only needed for XAU historical candles if you explicitly add `XAUUSDT` back to `mt5_fallback_symbols`.
 
 ## 2. Start The App
 
@@ -54,7 +54,7 @@ python -m trading_agent.history_backfill --years 2
 What this does:
 
 - Downloads BTCUSDT and ETHUSDT M1 candles from Binance using paginated 1500-candle requests.
-- Uses MT5 M1 rates for configured XAU fallback symbols when Binance history is missing or too short.
+- Downloads XAUUSDT M1 candles from Binance unless the symbol is explicitly configured in `mt5_fallback_symbols`.
 - Stores raw candles in SQLite.
 - Derives structural liquidity levels from the stored candles.
 

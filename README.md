@@ -26,7 +26,7 @@ python -m trading_agent.history_backfill --levels-only
 python -m trading_agent.history_backfill --prune-old-m1 --force-prune
 ```
 
-See `docs/FIRST_RUN_HISTORICAL_LIQUIDITY.md` for the full fresh-machine sequence, MT5/XAU notes, rebuild guidance, and how the app keeps itself updated after the first run.
+See `docs/FIRST_RUN_HISTORICAL_LIQUIDITY.md` for the full fresh-machine sequence, Binance XAU notes, rebuild guidance, and how the app keeps itself updated after the first run.
 
 ## Live Operation
 

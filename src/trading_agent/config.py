@@ -74,8 +74,8 @@ DEFAULT_CONFIG = {
         "prune_raw_m1_while_running": True,
         "incremental_level_window_days": 7,
         "request_sleep_seconds": 0.05,
-        "binance_symbols": ["BTCUSDT", "ETHUSDT"],
-        "mt5_fallback_symbols": ["XAUUSDT"],
+        "binance_symbols": ["BTCUSDT", "ETHUSDT", "XAUUSDT"],
+        "mt5_fallback_symbols": [],
     },
     "major_liquidity": {
         "enabled": True,
