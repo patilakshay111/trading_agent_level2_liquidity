@@ -2,6 +2,19 @@
 
 Local operator UI and engine for Binance WebSocket liquidity research with MT5 execution.
 
+## Why this project matters
+
+The project is structured as a practical agentic trading workstation: it continuously reads market microstructure, derives liquidity context, scores setups, checks risk, and exposes every decision through a local UI before MT5 execution is allowed.
+
+## Agentic system design
+
+- Market-data agent: consumes Binance depth, trade, kline, and historical liquidity inputs.
+- Liquidity-memory agent: preserves meaningful levels, sweeps, equal extremes, and volume zones over time.
+- Thesis agent: converts order-flow features into a directional setup with invalidation and target logic.
+- Risk agent: validates spread, sizing, daily risk, contract metadata, and stop placement.
+- Execution agent: integrates with MT5, but live orders remain blocked until explicitly enabled.
+- Operator UI: surfaces status, open positions, historical levels, logs, and safety state.
+
 ## Start
 
 Double-click `Start Trading Agent.bat`, or run:
