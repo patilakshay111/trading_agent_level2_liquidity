@@ -1,4 +1,14 @@
 # Trading Agent
+[![GitHub release](https://img.shields.io/github/release/patilakshay111/Project-self-healing-docs-with-PR.svg?label=Latest)](https://github.com/patilakshay111/Project-self-healing-docs-with-PR/releases/latest)
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Self--Healing%20Docs-blue?logo=github)](https://github.com/marketplace)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)](https://www.python.org/)
+[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-green?logo=openai)](https://platform.openai.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)](https://www.docker.com/)
+[![GitHub Actions](https://img.shields.io/badge/CI-GitHub%20Actions-gray?logo=github-actions)](https://github.com/features/actions)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+<img width="2752" height="1536" alt="Gemini_Generated_Image_3thuih3thuih3thu" src="https://github.com/user-attachments/assets/2d465a46-a75d-4692-abb3-4765a443c636" />
+
 
 Local operator UI and engine for Binance WebSocket liquidity research with MT5 execution.
 
